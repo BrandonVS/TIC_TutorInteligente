@@ -5,7 +5,7 @@ from django.db import models
 from django.conf import settings
 
 from Quiz.pruebasimpful import sistemaFuzzy
-from .pruebasimpful import obtener_dif_pregunta
+from .sistemafuzzy import obtener_dif_pregunta
 
 import random
 
