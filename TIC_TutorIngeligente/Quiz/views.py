@@ -112,7 +112,7 @@ def jugar(request):
 		return redirect('jugar')
 
 	else:
-		if len(array) < 5 and getP == True:
+		if len(array) < 15 and getP == True:
 			pregunta = QuizUser.obtener_nuevas_preguntas()
 			correcta = obtenerCorrecta(pregunta.id, ElegirRespuesta)
 			context = {
