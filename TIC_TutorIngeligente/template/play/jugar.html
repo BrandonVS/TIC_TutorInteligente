@@ -20,8 +20,10 @@
 </div>
 
 <script>
+
 	sec = {{ sec }},
     countDiv = document.getElementById("timer"),
+	secpass(),
     countDown = setInterval(function () {
         secpass();
     }, 1000);
@@ -44,7 +46,9 @@ function secpass() {
     } else {
         clearInterval(countDown);
         window.location.href = '/sinTiempo/';
-    }$.ajax({
+    }
+	
+	$.ajax({
         type: "GET",
         url: '/jugar',
         data: {

@@ -2,9 +2,11 @@ import string
 from tkinter.tix import INTEGER
 from django.shortcuts import render, redirect, get_object_or_404
 
-from Quiz.pruebasimpful import sistemaFuzzy
+from Quiz.sistemafuzzy import sistemaFuzzy
 
 from .forms import RegistroFormulario, UsuarioLoginFormulario
+
+from django.core.exceptions import ValidationError, MultipleObjectsReturned
 
 from .models import QuizUsuario, Pregunta, PreguntasRespondidas, ElegirRespuesta
 
@@ -13,7 +15,7 @@ from django.http import Http404
 from django.core.exceptions import ObjectDoesNotExist
 
 array = []
-sec = 60
+sec = 1800
 t_pregunta = 0
 ultima = 0
 pregunta = None
@@ -21,10 +23,8 @@ getP = True
 bandera = False
 
 def inicio(request):
-	global array
-	array = []
 	global sec
-	sec = 60
+	sec = 1800
 	global t_pregunta
 	t_pregunta = 0
 	global ultima
@@ -75,24 +75,33 @@ def jugar(request):
 
 	QuizUser, created = QuizUsuario.objects.get_or_create(usuario=get_client_ip(request))
 
+	context = {
+				'pregunta':pregunta,
+				'array':len(array),
+				'sec': sec,
+			}
+
 	if request.GET.get('bandera', False):
 		bandera = True
 
 	if request.method == 'POST':
 
-		QuizUser.crear_intentos(pregunta)
+		
 
 		pregunta_pk = request.POST.get('pregunta_pk')
-		pregunta_respondida = QuizUser.intentos.select_related('pregunta').get(pregunta__pk=pregunta_pk)
+		
 		
 		respuesta_pk = request.POST.get('respuesta_pk')
+		print(respuesta_pk)
 		
-		array.append(pregunta_respondida)
+		if respuesta_pk is None:
+			return render(request, 'play/jugar.html', context)			
+
 		ultima = t_pregunta
-		try:
-			opcion_selecionada = pregunta_respondida.pregunta.opciones.get(pk=respuesta_pk)
-		except ObjectDoesNotExist:
-			raise Http404	
+		QuizUser.crear_intentos(pregunta)
+		pregunta_respondida = QuizUser.intentos.select_related('pregunta').get(pregunta__pk=pregunta_pk)
+		opcion_selecionada = pregunta_respondida.pregunta.opciones.get(pk=respuesta_pk)
+		array.append(pregunta_respondida)
 		
 		calificacion = QuizUser.validar_intento(pregunta_respondida, opcion_selecionada)
 		dificultad = pregunta.dificultad
@@ -123,7 +132,7 @@ def jugar(request):
 	sec = request.GET.get('sec', None)
 
 	if sec != None:
-		t_pregunta = 60 - int(sec) - ultima
+		t_pregunta = 1800 - int(sec) - ultima
 	
 	return render(request, 'play/jugar.html', context)
 

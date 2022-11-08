@@ -1,8 +1,8 @@
 from simpful import *
 
-calificacion = 0
-tiempo = 0
-ayuda = 0
+calificacion = 1
+tiempo = 37.1
+ayuda = 1
 
 
 FS = FuzzySystem()
