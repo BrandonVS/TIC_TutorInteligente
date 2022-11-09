@@ -75,39 +75,17 @@ def jugar(request):
 
 	QuizUser, created = QuizUsuario.objects.get_or_create(usuario=get_client_ip(request))
 
-	if request.GET.get('bandera', False):
-		bandera = True
-
-	if request.method == 'POST':
-
-		pregunta_pk = request.POST.get('pregunta_pk')	
-		
-		respuesta_pk = request.POST.get('respuesta_pk')
-		print(respuesta_pk)
-		
-		if respuesta_pk is None:
-			return render(request, 'play/jugar.html', {
+	context = {
 				'pregunta':pregunta,
 				'array':len(array),
 				'sec': sec,
-			})			
+			}
 
-		ultima = t_pregunta
-		QuizUser.crear_intentos(pregunta)
-		pregunta_respondida = QuizUser.intentos.select_related('pregunta').get(pregunta__pk=pregunta_pk)
-		opcion_selecionada = pregunta_respondida.pregunta.opciones.get(pk=respuesta_pk)
-		array.append(pregunta_respondida)
-		
-		calificacion = QuizUser.validar_intento(pregunta_respondida, opcion_selecionada)
-		dificultad = pregunta.dificultad
+	if request.GET.get('bandera', False):
+		bandera = True
 
-		sistemaFuzzy(calificacion, ultima, bandera, dificultad)
-		getP = True
-		bandera = False
+	if request.method != 'POST':
 
-		return redirect('resultado', pregunta_respondida.pk)
-
-	else:
 		if len(array) < 15 and getP == True:
 
 			pregunta = QuizUser.obtener_nuevas_preguntas()
@@ -128,6 +106,30 @@ def jugar(request):
 				'sec': sec,
 				
 			}
+
+	else:
+		pregunta_pk = request.POST.get('pregunta_pk')	
+		
+		respuesta_pk = request.POST.get('respuesta_pk')
+		print(respuesta_pk)
+		
+		if respuesta_pk is None:
+			return render(request, 'play/jugar.html', context)			
+
+		ultima = t_pregunta
+		QuizUser.crear_intentos(pregunta)
+		pregunta_respondida = QuizUser.intentos.select_related('pregunta').get(pregunta__pk=pregunta_pk)
+		opcion_selecionada = pregunta_respondida.pregunta.opciones.get(pk=respuesta_pk)
+		array.append(pregunta_respondida)
+		
+		calificacion = QuizUser.validar_intento(pregunta_respondida, opcion_selecionada)
+		dificultad = pregunta.dificultad
+
+		sistemaFuzzy(calificacion, ultima, bandera, dificultad)
+		getP = True
+		bandera = False
+
+		return redirect('resultado', pregunta_respondida.pk)
 	
 	sec = request.GET.get('sec', None)
 
