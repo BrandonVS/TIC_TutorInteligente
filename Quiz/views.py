@@ -86,10 +86,7 @@ def jugar(request):
 
 	if request.method == 'POST':
 
-		
-
 		pregunta_pk = request.POST.get('pregunta_pk')
-		
 		
 		respuesta_pk = request.POST.get('respuesta_pk')
 		print(respuesta_pk)
@@ -114,7 +111,9 @@ def jugar(request):
 
 	else:
 		if len(array) < 15 and getP == True:
+
 			pregunta = QuizUser.obtener_nuevas_preguntas()
+			
 			if pregunta is None:
 				return render(request, 'play/jugar.html', {'array': 15})	
 			correcta = obtenerCorrecta(pregunta.id, ElegirRespuesta)
