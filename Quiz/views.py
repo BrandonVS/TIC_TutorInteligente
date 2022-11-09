@@ -74,43 +74,21 @@ def jugar(request):
 	global bandera
 
 	QuizUser, created = QuizUsuario.objects.get_or_create(usuario=get_client_ip(request))
-	
+
 	context = {
 				'pregunta':pregunta,
 				'array':len(array),
 				'sec': sec,
 			}
 
-	if pregunta.id is None:
-		return render(request, 'play/jugar.html', context)	
-
 	if request.GET.get('bandera', False):
 		bandera = True
 
-	if request.method != 'POST':
-		
-		if len(array) < 15 and getP == True:
+	if pregunta.id is None:
+		return render(request, 'play/jugar.html', context)
 
-			pregunta = QuizUser.obtener_nuevas_preguntas()
-			
-			if pregunta is None:
-				return render(request, 'play/jugar.html', {'array': 15})	
-			correcta = obtenerCorrecta(pregunta.id, ElegirRespuesta)
-			context = {
-				'pregunta':pregunta,
-				'array':len(array),
-				'sec': sec,
-				'correcta': correcta,
-			}
-			getP = False
-		else:
-			context = {
-				'array':len(array),
-				'sec': sec,
-				
-			}
-		
-	else:
+	if request.method == 'POST':
+
 		pregunta_pk = request.POST.get('pregunta_pk')	
 		
 		respuesta_pk = request.POST.get('respuesta_pk')
@@ -133,6 +111,28 @@ def jugar(request):
 		bandera = False
 
 		return redirect('resultado', pregunta_respondida.pk)
+
+	else:
+		if len(array) < 15 and getP == True:
+
+			pregunta = QuizUser.obtener_nuevas_preguntas()
+			
+			if pregunta is None:
+				return render(request, 'play/jugar.html', {'array': 15})	
+			correcta = obtenerCorrecta(pregunta.id, ElegirRespuesta)
+			context = {
+				'pregunta':pregunta,
+				'array':len(array),
+				'sec': sec,
+				'correcta': correcta,
+			}
+			getP = False
+		else:
+			context = {
+				'array':len(array),
+				'sec': sec,
+				
+			}
 	
 	sec = request.GET.get('sec', None)
 
