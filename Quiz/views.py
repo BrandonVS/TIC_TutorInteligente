@@ -75,27 +75,22 @@ def jugar(request):
 
 	QuizUser, created = QuizUsuario.objects.get_or_create(usuario=get_client_ip(request))
 
-	context = {
-				'pregunta':pregunta,
-				'array':len(array),
-				'sec': sec,
-			}
-
 	if request.GET.get('bandera', False):
 		bandera = True
 
 	if request.method == 'POST':
 
-		pregunta_pk = request.POST.get('pregunta_pk')
-
-		if pregunta_pk is None:
-			return render(request, 'play/jugar.html', context)	
+		pregunta_pk = request.POST.get('pregunta_pk')	
 		
 		respuesta_pk = request.POST.get('respuesta_pk')
 		print(respuesta_pk)
 		
 		if respuesta_pk is None:
-			return render(request, 'play/jugar.html', context)			
+			return render(request, 'play/jugar.html', {
+				'pregunta':pregunta,
+				'array':len(array),
+				'sec': sec,
+			})			
 
 		ultima = t_pregunta
 		QuizUser.crear_intentos(pregunta)
