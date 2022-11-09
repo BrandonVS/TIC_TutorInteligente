@@ -47,7 +47,7 @@ class QuizUsuario(models.Model):
 		dif = obtener_dif_pregunta()
 		respondidas = PreguntasRespondidas.objects.filter(quizUser=self).values_list('pregunta__pk', flat=True)
 		preguntas_restantes = Pregunta.objects.exclude(pk__in=respondidas)
-		if not preguntas_restantes.exists():
+		if len(respondidas) >= 15:
 			return None
 		try: 
 			return random.choice(preguntas_restantes.filter(dificultad=dif))
