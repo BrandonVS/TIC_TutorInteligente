@@ -109,7 +109,8 @@ def jugar(request):
 		sistemaFuzzy(calificacion, ultima, bandera, dificultad)
 		getP = True
 		bandera = False
-		return redirect('jugar')
+
+		return redirect('resultado', pregunta_respondida.pk)
 
 	else:
 		if len(array) < 15 and getP == True:
@@ -137,6 +138,14 @@ def jugar(request):
 		t_pregunta = 1800 - int(sec) - ultima
 	
 	return render(request, 'play/jugar.html', context)
+
+def resultado(request, pregunta_respondida_pk):
+	respondida = get_object_or_404(PreguntasRespondidas, pk=pregunta_respondida_pk)
+
+	context = {
+		'respondida':respondida
+	}
+	return render(request, 'play/resultado.html', context)
 
 def sinTiempo(request):
 	
