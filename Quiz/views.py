@@ -136,7 +136,7 @@ def jugar(request):
 	if sec != None:
 		t_pregunta = 1800 - int(sec) - ultima
 	
-	if pregunta is None:
+	if request.GET.get('pregunta', None) is None:
 		return render(request, 'play/jugar.html', context)
 
 	return render(request, 'play/jugar.html', context)
