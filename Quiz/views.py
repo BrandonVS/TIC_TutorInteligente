@@ -84,9 +84,6 @@ def jugar(request):
 	if request.GET.get('bandera', False):
 		bandera = True
 
-	if pregunta is None:
-		return render(request, 'play/jugar.html', context)
-
 	if request.method == 'POST':
 
 		pregunta_pk = request.POST.get('pregunta_pk')	
@@ -139,6 +136,9 @@ def jugar(request):
 	if sec != None:
 		t_pregunta = 1800 - int(sec) - ultima
 	
+	if pregunta is None:
+		return render(request, 'play/jugar.html', context)
+
 	return render(request, 'play/jugar.html', context)
 
 def resultado(request, pregunta_respondida_pk):
