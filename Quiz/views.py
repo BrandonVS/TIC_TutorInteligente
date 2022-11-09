@@ -87,6 +87,9 @@ def jugar(request):
 	if request.method == 'POST':
 
 		pregunta_pk = request.POST.get('pregunta_pk')
+
+		if pregunta_pk is None:
+			return render(request, 'play/jugar.html', context)	
 		
 		respuesta_pk = request.POST.get('respuesta_pk')
 		print(respuesta_pk)
