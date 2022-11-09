@@ -84,7 +84,7 @@ def jugar(request):
 	if request.GET.get('bandera', False):
 		bandera = True
 
-	if pregunta.id is None:
+	if pregunta is None:
 		return render(request, 'play/jugar.html', context)
 
 	if request.method == 'POST':
