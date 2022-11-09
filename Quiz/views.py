@@ -74,18 +74,21 @@ def jugar(request):
 	global bandera
 
 	QuizUser, created = QuizUsuario.objects.get_or_create(usuario=get_client_ip(request))
-
+	
 	context = {
 				'pregunta':pregunta,
 				'array':len(array),
 				'sec': sec,
 			}
 
+	if pregunta.id is None:
+		return render(request, 'play/jugar.html', context)	
+
 	if request.GET.get('bandera', False):
 		bandera = True
 
 	if request.method != 'POST':
-
+		
 		if len(array) < 15 and getP == True:
 
 			pregunta = QuizUser.obtener_nuevas_preguntas()
@@ -106,7 +109,7 @@ def jugar(request):
 				'sec': sec,
 				
 			}
-
+		
 	else:
 		pregunta_pk = request.POST.get('pregunta_pk')	
 		
