@@ -9,7 +9,7 @@ from .views import (
 
 urlpatterns = [
 	
-	path('inicio/', inicio, name='inicio'),
+	path('', inicio, name='inicio'),
 	path('tablero/', tablero, name='tablero'),
 	path('jugar/', jugar, name='jugar'),
 	path('sinTiempo/', sinTiempo, name='sinTiempo'),
