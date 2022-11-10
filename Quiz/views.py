@@ -36,19 +36,16 @@ def inicio(request):
 	global bandera
 	bandera = False
 
-	aviso = ''
+	aviso = None
 
 	nombre_usuario = request.POST.get('nombre_estudiante')
+	print(nombre_usuario)	
 
-	if nombre_usuario is None:
-		aviso = 'Ingrese su nombre.'
-		context = {
-		'aviso': aviso
-
-	}
-		return render(request, 'play/jugar.html', context)	
-
-	return render(request, 'inicio.html', {'aviso': aviso})
+	if request.method =='POST':
+		if nombre_usuario != '' and nombre_usuario is not None:
+			QuizUsuario.objects.get_or_create(usuario=get_client_ip(request), nombre=request.POST.get('nombre_estudiante'))
+			return redirect('jugar')
+	return render(request, 'inicio.html', {'inicio': 'inicio'})
 
 def tablero(request):
 	total_usaurios_quiz = QuizUsuario.objects.order_by('-puntaje_total')[:10]
@@ -95,7 +92,6 @@ def jugar(request):
 		pregunta_pk = request.POST.get('pregunta_pk')
 		
 		respuesta_pk = request.POST.get('respuesta_pk')
-		print(respuesta_pk)
 		
 		if respuesta_pk is None:
 			return render(request, 'play/jugar.html', context)			
@@ -120,13 +116,7 @@ def jugar(request):
 			pregunta = QuizUser.obtener_nuevas_preguntas()
 			if pregunta is None:
 				return render(request, 'play/jugar.html', {'array': 15})	
-			correcta = obtenerCorrecta(pregunta.id, ElegirRespuesta)
-			context = {
-				'pregunta':pregunta,
-				'array':len(array),
-				'sec': sec,
-				'correcta': correcta,
-			}
+
 			getP = False
 		else:
 			context = {
@@ -134,7 +124,20 @@ def jugar(request):
 				'sec': sec,
 				
 			}
-	
+	try:
+		correcta = obtenerCorrecta(pregunta.id, ElegirRespuesta)
+	except AttributeError:
+		context = {
+			'array':15
+		}
+		return render(request, 'play/jugar.html', context)
+	context = {
+				'pregunta':pregunta,
+				'array':len(array),
+				'sec': sec,
+				'correcta': correcta,
+			}
+
 	sec = request.GET.get('sec', None)
 
 	if sec != None:

@@ -37,7 +37,7 @@ class ElegirRespuesta(models.Model):
 
 class QuizUsuario(models.Model):
 	usuario = models.TextField(verbose_name='Ip usuario')
-	nombre = models.TextField(verbose_name='Nombre del usuario')
+	nombre = models.TextField(verbose_name='Nombre del usuario', null=True)
 	puntaje_total = models.DecimalField(verbose_name='Puntaje Total', null=True, default=0.00, decimal_places=2, max_digits=10)
 
 	def guardar_nombre(self, nombre):
