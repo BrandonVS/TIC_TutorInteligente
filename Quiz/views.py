@@ -35,14 +35,15 @@ def inicio(request):
 	getP = True
 	global bandera
 	bandera = False
-
-	aviso = None
+	global array
+	array = []
 
 	nombre_usuario = request.POST.get('nombre_estudiante')
 	print(nombre_usuario)	
 
 	if request.method =='POST':
 		if nombre_usuario != '' and nombre_usuario is not None:
+			QuizUsuario.objects.get_or_create(usuario=get_client_ip(request), nombre=request.POST.get('nombre_estudiante'))
 			try:
 				QuizUser, created = QuizUsuario.objects.get_or_create(usuario=get_client_ip(request))
 			except MultipleObjectsReturned:
@@ -50,7 +51,6 @@ def inicio(request):
 					'array':15
 				}
 				return render(request, 'play/jugar.html', context)
-			QuizUsuario.objects.get_or_create(usuario=get_client_ip(request), nombre=request.POST.get('nombre_estudiante'))
 			return redirect('jugar')
 	return render(request, 'inicio.html', {'inicio': 'inicio'})
 
