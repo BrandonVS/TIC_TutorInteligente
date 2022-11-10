@@ -36,13 +36,19 @@ def inicio(request):
 	global bandera
 	bandera = False
 
-	context = {
+	aviso = ''
 
-		'bienvenido': 'Bienvenido'
+	nombre_usuario = request.POST.get('nombre_estudiante')
+
+	if nombre_usuario is None:
+		aviso = 'Ingrese su nombre.'
+		context = {
+		'aviso': aviso
 
 	}
+		return render(request, 'play/jugar.html', context)	
 
-	return render(request, 'inicio.html', context)
+	return render(request, 'inicio.html', {'aviso': aviso})
 
 def tablero(request):
 	total_usaurios_quiz = QuizUsuario.objects.order_by('-puntaje_total')[:10]

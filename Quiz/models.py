@@ -37,8 +37,13 @@ class ElegirRespuesta(models.Model):
 
 class QuizUsuario(models.Model):
 	usuario = models.TextField(verbose_name='Ip usuario')
+	nombre = models.TextField(verbose_name='Nombre del usuario')
 	puntaje_total = models.DecimalField(verbose_name='Puntaje Total', null=True, default=0.00, decimal_places=2, max_digits=10)
 
+	def guardar_nombre(self, nombre):
+		usuario_nom = QuizUsuario(nombre=nombre)
+		usuario_nom.save()
+	
 	def crear_intentos(self, pregunta):
 		intento = PreguntasRespondidas(pregunta=pregunta, quizUser=self)
 		intento.save()
@@ -55,13 +60,7 @@ class QuizUsuario(models.Model):
 			return random.choice(preguntas_restantes)
 
 	def validar_intento(self, pregunta_respondida, respuesta_selecionada):
-		if pregunta_respondida.pregunta_id != respuesta_selecionada.pregunta_id:
-			return
-
-		pregunta_respondida.respuesta_selecionada = respuesta_selecionada
-		if pregunta_respondida.respuesta_selecionada is None:
-			print("None")
-			
+		
 		if respuesta_selecionada.correcta is True:
 			pregunta_respondida.correcta = True
 			pregunta_respondida.puntaje_obtenido = respuesta_selecionada.pregunta.max_puntaje
@@ -87,6 +86,7 @@ class QuizUsuario(models.Model):
 
 class PreguntasRespondidas(models.Model):
 	quizUser = models.ForeignKey(QuizUsuario, on_delete=models.CASCADE, related_name='intentos')
+	
 	pregunta = models.ForeignKey(Pregunta, on_delete=models.CASCADE)
 	respuesta = models.ForeignKey(ElegirRespuesta, on_delete=models.CASCADE, null=True)
 	correcta  = models.BooleanField(verbose_name='¿Es esta la respuesta correcta?', default=False)
