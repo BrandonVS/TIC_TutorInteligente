@@ -21,6 +21,7 @@ ultima = 0
 pregunta = None
 getP = True
 bandera = False
+nombre_usuario = ''
 
 def inicio(request):
 	global sec
@@ -37,32 +38,46 @@ def inicio(request):
 	bandera = False
 	global array
 	array = []
+	global nombre_usuario
 
 	nombre_usuario = request.POST.get('nombre_estudiante')
-	print(nombre_usuario)	
 
 	if request.method =='POST':
 		if nombre_usuario != '' and nombre_usuario is not None:
-			QuizUsuario.objects.get_or_create(usuario=get_client_ip(request), nombre=request.POST.get('nombre_estudiante'))
-			try:
-				QuizUser, created = QuizUsuario.objects.get_or_create(usuario=get_client_ip(request))
-			except MultipleObjectsReturned:
+			if len(nombre_usuario) > 10:
 				context = {
-					'array':15
+					'alerta': 'Ese nombre tiene más de 10 caracteres.'
 				}
-				return render(request, 'play/jugar.html', context)
+				return render(request, 'inicio.html', context)
+			QuizUsuario.objects.get_or_create(usuario=get_client_ip(request), nombre=request.POST.get('nombre_estudiante'))
 			return redirect('jugar')
-	return render(request, 'inicio.html', {'inicio': 'inicio'})
+	return render(request, 'inicio.html')
 
 def tablero(request):
+
+	try:
+		QuizUser = QuizUsuario.objects.get(usuario=get_client_ip(request), nombre=getNombre())
+		n_preguntas = QuizUser.num_p
+	except ObjectDoesNotExist:
+		n_preguntas = 0
+
 	total_usaurios_quiz = QuizUsuario.objects.order_by('-puntaje_total')[:10]
 	contador = total_usaurios_quiz.count()
 
 	context = {
-
+		'user':getNombre(),
 		'usuario_quiz':total_usaurios_quiz,
 		'contar_user':contador
 	}
+
+	if n_preguntas >= 20:
+		codigo = get_client_ip(request) + '.' + getNombre()
+		context = {
+			'user':getNombre(),
+			'usuario_quiz':total_usaurios_quiz,
+			'contar_user':contador,
+			'codigo':'Su codigo es: ' + codigo
+		}
 
 	return render(request, 'play/tablero.html', context)
 
@@ -74,6 +89,10 @@ def get_client_ip(request):
         ip = request.META.get('REMOTE_ADDR')
     return ip
 
+def getNombre():
+	global nombre_usuario
+	return nombre_usuario
+
 def jugar(request):
 	global array
 	global sec
@@ -83,20 +102,14 @@ def jugar(request):
 	global getP
 	global bandera
 
-	try:
-		QuizUser, created = QuizUsuario.objects.get_or_create(usuario=get_client_ip(request))
-	except MultipleObjectsReturned:
-		context = {
-			'array':15
-		}
-		return render(request, 'play/jugar.html', context)
+	QuizUser, created = QuizUsuario.objects.get_or_create(usuario=get_client_ip(request), nombre=getNombre())
 
 	context = {
-				'pregunta':pregunta,
-				'array':len(array),
-				'sec': sec,
-			}
-
+			'pregunta':pregunta,
+			'n_pregunta': QuizUser.num_p + 1,
+			'array':len(array),
+			'sec': sec,
+		}
 	if request.GET.get('bandera', False):
 		bandera = True
 
@@ -115,24 +128,28 @@ def jugar(request):
 		opcion_selecionada = pregunta_respondida.pregunta.opciones.get(pk=respuesta_pk)
 		array.append(pregunta_respondida)
 		
-		calificacion = QuizUser.validar_intento(pregunta_respondida, opcion_selecionada)
+		
 		dificultad = pregunta.dificultad
 
+		calificacion = QuizUser.validar_intento(pregunta_respondida, opcion_selecionada, dificultad, bandera, ultima)
+
 		sistemaFuzzy(calificacion, ultima, bandera, dificultad)
+		
 		getP = True
 		bandera = False
 
 		return redirect('resultado', pregunta_respondida.pk)
 
 	else:
-		if len(array) < 15 and getP == True:
+		if len(array) <= 20 and getP == True:
 			pregunta = QuizUser.obtener_nuevas_preguntas()
 			if pregunta is None:
-				return render(request, 'play/jugar.html', {'array': 15})	
+				return render(request, 'play/jugar.html', {'array': 20})	
 
 			getP = False
 		else:
 			context = {
+				'n_pregunta': QuizUser.num_p + 1,
 				'array':len(array),
 				'sec': sec,
 				
@@ -141,11 +158,12 @@ def jugar(request):
 		correcta = obtenerCorrecta(pregunta.id, ElegirRespuesta)
 	except AttributeError:
 		context = {
-			'array':15
+			'array':20
 		}
 		return render(request, 'play/jugar.html', context)
 	context = {
 				'pregunta':pregunta,
+				'n_pregunta': QuizUser.num_p + 1,
 				'array':len(array),
 				'sec': sec,
 				'correcta': correcta,
@@ -169,6 +187,25 @@ def resultado(request, pregunta_respondida_pk):
 def sinTiempo(request):
 	
 	return render(request, 'play/sinTiempo.html')
+
+def comentario(request):
+
+	QuizUser = QuizUsuario.objects.get(usuario=get_client_ip(request), nombre=getNombre())
+	coment = request.POST.get('comentario')
+
+	context = {
+		'bandera':False
+	}
+
+	if request.method == 'POST':
+		QuizUser.guardar_comentario(coment)
+		context = {
+			'bandera':True,
+			'gracias':'Gracias por tu comentario'
+		}
+
+
+	return render(request, 'comentario.html', context)
 
 def obtenerCorrecta(pregunta_id, respuesta):
 	correcta = respuesta.objects.filter(pregunta=pregunta_id, correcta=True).get()

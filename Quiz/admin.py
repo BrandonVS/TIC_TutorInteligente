@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Pregunta, ElegirRespuesta, PreguntasRespondidas, QuizUsuario
+from .models import *
 
 from .forms import ElegirInlineFormset
 
@@ -29,3 +29,4 @@ admin.site.register(PreguntasRespondidas)
 admin.site.register(Pregunta, PreguntaAdmin)
 admin.site.register(ElegirRespuesta)
 admin.site.register(QuizUsuario)
+admin.site.register(ComentarioUsuario)

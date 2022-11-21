@@ -6,7 +6,8 @@ from .views import (
 			sinTiempo,
 			tablero,
 			sinTiempo,
-			resultado)
+			resultado,
+			comentario)
 
 urlpatterns = [
 	
@@ -15,5 +16,6 @@ urlpatterns = [
 	path('jugar/', jugar, name='jugar'),
 	path('sinTiempo/', sinTiempo, name='sinTiempo'),
 	path('resultado/<int:pregunta_respondida_pk>', resultado, name='resultado'),
+	path('comentario/', comentario, name='comentario'),
 
 ]

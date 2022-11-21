@@ -49,13 +49,7 @@ def sistemaFuzzy(calificacion, tiempo, ayuda, dificultad):
 
 	difSig = dificultadSig.get('dificultadSig')
 
-	print('Las variables de entrada son:\nCalificacion: ' + str(calificacion) + '\nTiempo: ' + str(tiempo) + '\nAyudas: ' + str(ayuda))
-
-	print('Resultado simpful:' + str(difSig))
-
 	definir_dificultad(difSig, dificultad)
-
-	print('Dificultad definida: ' + str(difSig))
 
 def definir_dificultad(dif, dificultad):
 	global difSig

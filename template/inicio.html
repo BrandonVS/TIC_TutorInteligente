@@ -2,16 +2,17 @@
 
 <h1>Sistema tutor inteligente</h1>
 <h2>Apoyo en la materia de Fundamentos de Hardware</h2>
-<p>Durante la prueba se examinaran los contenidos de las unidades 1 y 2 de la materia de Fundamentos de Hardware.</p>
+<p>Durante la prueba se examinarán los contenidos del primer bimestre de la materia de Fundamentos de Hardware. (Unidades 1, 2, 3 y 4 de la guía didáctica)</p>
 
 
-<p>Ingrese su nombre</p>
+<p>Ingrese su cédula de identidad o su nombre (Máximo 10 caracteres)</p>
+<p>Ingrese diferentes nombres de usuario en caso de querer repetir la prueba.</p>
+<p>{{ alerta }}</p>
 <form method="POST" class="form">
     {% csrf_token %}
     <input name="nombre_estudiante">
 <button class="btn btn-success">
     Iniciar
 </button>
-</a>
 
 {% endblock %}

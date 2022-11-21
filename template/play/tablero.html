@@ -7,7 +7,7 @@
 	<h1 class="text-center my-4"> 
 		<span class="badge badge-info">
 
-			Los {{contar_user}} mejores jugadores
+			Saludos {{user}} - Los {{contar_user}} mejores jugadores
 			
 		</span>
 	</h1>
@@ -33,5 +33,23 @@
 	</table>
 
 </div>
+
+<div id='texto_final'>
+
+<p>¿Tuviste algún inconveniente? Haz <a href="{% url 'comentario' %}">click aqui</a> para enviarnos un comentario final</p>
+<p>{{codigo}}</p>
+<a href="{% url 'inicio' %}">
+	<button>
+		Regresar al inicio
+	</button>
+</a>
+
+</div>
+
+<style>
+	#texto_final {
+		padding-left: 15%;
+	  }
+</style>
 
 {% endblock %}
