@@ -46,7 +46,7 @@ def inicio(request):
 		if nombre_usuario != '' and nombre_usuario is not None:
 			if len(nombre_usuario) > 10:
 				context = {
-					'alerta': 'Ese nombre tiene más de 10 caracteres.'
+					'alerta': 'El nombre ingresado tiene más de 10 caracteres.'
 				}
 				return render(request, 'inicio.html', context)
 			QuizUsuario.objects.get_or_create(usuario=get_client_ip(request), nombre=request.POST.get('nombre_estudiante'))
@@ -76,7 +76,7 @@ def tablero(request):
 			'user':getNombre(),
 			'usuario_quiz':total_usaurios_quiz,
 			'contar_user':contador,
-			'codigo':'Su codigo es: ' + codigo
+			'codigo':'Su código es: ' + codigo
 		}
 
 	return render(request, 'play/tablero.html', context)
