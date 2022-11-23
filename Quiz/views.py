@@ -113,7 +113,7 @@ def jugar(request):
 	try:
 		QuizUser = QuizUsuario.objects.get(usuario=get_client_ip(request), nombre=getNombre())
 	except:
-		return render(request, 'inicio.html', {'alerta':'Ingrese un nombre de usuario diferente.'})
+		return redirect('inicio')
 
 	context = {
 			'pregunta':pregunta,
