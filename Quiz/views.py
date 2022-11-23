@@ -52,7 +52,10 @@ def inicio(request):
 			try:
 				QuizUsuario.objects.get_or_create(usuario=get_client_ip(request), nombre=nombre_usuario)
 			except:
-				return redirect('tablero')
+				context = {
+					'alerta':'Ingrese otro nombre de usuario'
+				}
+				return render(request, 'inicio.html', context)
 			return redirect('jugar')
 	return render(request, 'inicio.html')
 
@@ -105,7 +108,10 @@ def jugar(request):
 	global getP
 	global bandera
 
-	QuizUser = QuizUsuario.objects.get(usuario=get_client_ip(request), nombre=getNombre())
+	try:
+		QuizUser = QuizUsuario.objects.get(usuario=get_client_ip(request), nombre=getNombre())
+	except:
+		return render(request, 'inicio.html', {'alerta':'Ingrese un nombre de usuario diferente.'})
 
 	context = {
 			'pregunta':pregunta,
