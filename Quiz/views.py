@@ -97,8 +97,6 @@ def get_client_ip(request):
 
 def getNombre():
 	global nombre_usuario
-	if nombre_usuario == '' or nombre_usuario is None:
-		return redirect('inicio')
 	return nombre_usuario
 
 def jugar(request):
