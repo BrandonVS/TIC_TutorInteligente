@@ -112,7 +112,7 @@ def jugar(request):
 
 	try:
 		QuizUser = QuizUsuario.objects.get(usuario=get_client_ip(request), nombre=getNombre())
-	except:
+	except ObjectDoesNotExist:
 		return redirect('inicio')
 
 	context = {
