@@ -49,7 +49,10 @@ def inicio(request):
 					'alerta': 'El nombre ingresado tiene más de 10 caracteres.'
 				}
 				return render(request, 'inicio.html', context)
-			QuizUsuario.objects.get_or_create(usuario=get_client_ip(request), nombre=request.POST.get('nombre_estudiante'))
+			try:
+				QuizUsuario.objects.get_or_create(usuario=get_client_ip(request), nombre=nombre_usuario)
+			except:
+				return redirect('tablero')
 			return redirect('jugar')
 	return render(request, 'inicio.html')
 
@@ -58,7 +61,7 @@ def tablero(request):
 	try:
 		QuizUser = QuizUsuario.objects.get(usuario=get_client_ip(request), nombre=getNombre())
 		n_preguntas = QuizUser.num_p
-	except ObjectDoesNotExist:
+	except:
 		n_preguntas = 0
 
 	total_usaurios_quiz = QuizUsuario.objects.order_by('-puntaje_total')[:10]
@@ -102,7 +105,7 @@ def jugar(request):
 	global getP
 	global bandera
 
-	QuizUser, created = QuizUsuario.objects.get_or_create(usuario=get_client_ip(request), nombre=getNombre())
+	QuizUser = QuizUsuario.objects.get(usuario=get_client_ip(request), nombre=getNombre())
 
 	context = {
 			'pregunta':pregunta,
