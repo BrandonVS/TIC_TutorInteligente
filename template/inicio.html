@@ -11,8 +11,9 @@
 <form method="POST" class="form">
     {% csrf_token %}
     <input name="nombre_estudiante">
+<a href='{% url jugar %}'>    
 <button class="btn btn-success">
     Iniciar
 </button>
-
+</a>
 {% endblock %}

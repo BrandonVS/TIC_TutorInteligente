@@ -50,7 +50,7 @@ def inicio(request):
 				}
 				return render(request, 'inicio.html', context)
 			try:
-				QuizUsuario.objects.get_or_create(usuario=get_client_ip(request), nombre=nombre_usuario)
+				QuizUsuario.objects.get_or_create(usuario=get_client_ip(request), nombre=getNombre())
 			except:
 				context = {
 					'alerta':'Ingrese otro nombre de usuario'
@@ -97,6 +97,8 @@ def get_client_ip(request):
 
 def getNombre():
 	global nombre_usuario
+	if nombre_usuario == '' or nombre_usuario is None:
+		return redirect('inicio')
 	return nombre_usuario
 
 def jugar(request):
