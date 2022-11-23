@@ -108,11 +108,8 @@ def jugar(request):
 	global getP
 	global bandera
 
-	try:
-		QuizUser = QuizUsuario.objects.get(usuario=get_client_ip(request), nombre=getNombre())
-	except ObjectDoesNotExist:
-		return redirect('inicio')
-
+	QuizUser = QuizUsuario.objects.get_or_create(usuario=get_client_ip(request), nombre=getNombre())
+	
 	context = {
 			'pregunta':pregunta,
 			'n_pregunta': QuizUser.num_p + 1,
