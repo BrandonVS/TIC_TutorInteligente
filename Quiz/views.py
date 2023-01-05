@@ -133,10 +133,7 @@ def jugar(request):
 		QuizUser.crear_intentos(pregunta)
 		pregunta_respondida = QuizUser.intentos.select_related('pregunta').filter(pregunta__pk=pregunta_pk).last()
 		print(type(pregunta_respondida))
-		try:
-		    opcion_selecionada = pregunta_respondida.pregunta.opciones.get(pk=respuesta_pk)
-		except:
-		    return render(request, 'play/jugar.html', context)
+		opcion_selecionada = pregunta_respondida.pregunta.opciones.get(pk=respuesta_pk)
 		array.append(pregunta_respondida)
 
 

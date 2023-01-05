@@ -33,6 +33,7 @@
 		</div>
 
 		<script>
+			
 			sec = {{ sec }},
 			countDiv = document.getElementById("timer"),
 			secpass(),
@@ -85,9 +86,13 @@
 					});
 				}); 
 			});
-			
+			var checkForm = function(form) {
+
+				form.myButton.disabled = true;
+				return true;
+			};
 		</script>
-		<form method="POST" class="form">
+		<form method="POST" class="form" onsubmit="return checkForm(this);">
 			{% csrf_token %}
 			<input type="hidden" name="pregunta_pk" value="{{pregunta.pk}}">
 
@@ -99,7 +104,7 @@
 				</label>
 				</div>
 			{% endfor %}
-			<button type="submit" class="btn btn-success">
+			<button name="myButton" type="submit" class="btn btn-success">
 				Comprobar respuesta
 			</button>
 		</form>

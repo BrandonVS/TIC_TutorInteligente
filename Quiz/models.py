@@ -31,7 +31,7 @@ class ElegirRespuesta(models.Model):
 	pregunta = models.ForeignKey(Pregunta, related_name='opciones', on_delete=models.CASCADE)
 	correcta = models.BooleanField(verbose_name='¿Es esta la pregunta correcta?', default=False)
 	texto = models.TextField(verbose_name='Texto de la respuesta')
-	
+
 	def __str__(self):
 		return self.texto
 
@@ -56,13 +56,13 @@ class QuizUsuario(models.Model):
 		preguntas_restantes = Pregunta.objects.exclude(pk__in=respondidas)
 		if len(respondidas) >= 20:
 			return None
-		try: 
+		try:
 			return random.choice(preguntas_restantes.filter(dificultad=dif))
 		except IndexError:
 			return random.choice(preguntas_restantes)
 
 	def validar_intento(self, pregunta_respondida, respuesta_selecionada, dificultad, ayuda, tiempo):
-		
+
 		if respuesta_selecionada.correcta is True:
 			pregunta_respondida.correcta = True
 			pregunta_respondida.puntaje_obtenido = respuesta_selecionada.pregunta.max_puntaje
@@ -82,7 +82,7 @@ class QuizUsuario(models.Model):
 		self.num_p += 1
 		self.save()
 		pregunta_respondida.save()
-		
+
 		self.actualizar_puntaje()
 
 		return calificacion
