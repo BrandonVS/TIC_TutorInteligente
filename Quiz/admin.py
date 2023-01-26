@@ -1,4 +1,6 @@
+from django.urls import path
 from django.contrib import admin
+from django.http import HttpResponseRedirect
 
 from .models import *
 
@@ -12,10 +14,37 @@ class ElegirRespuestaInline(admin.TabularInline):
 	formset = ElegirInlineFormset
 
 class PreguntaAdmin(admin.ModelAdmin):
+	change_list_template = 'pregunta_changelist.html'
 	model = Pregunta
 	inlines = (ElegirRespuestaInline, )
 	list_display = ['texto',]
 	search_fields = ['texto', 'preguntas__texto']
+	
+	def get_urls(self):
+		urls = super().get_urls()
+		my_urls = [ 
+			path('bimestre_1_activo/', self.activar_b1),
+			path('bimestre_2_activo/', self.activar_b2),
+			]
+		return my_urls + urls 
+
+	def activar_b1(self, request):
+		for i in range(1, 5):
+			self.model.objects.filter(unidad=i).update(bimestre_activo=True)
+
+		for i in range(5, 7):
+			self.model.objects.filter(unidad=i).update(bimestre_activo=False)
+		self.message_user(request, "Las preguntas del bimestre 1 están activas")
+		return HttpResponseRedirect("../") 
+
+	def activar_b2(self, request):
+		for i in range(1, 5):
+			self.model.objects.filter(unidad=i).update(bimestre_activo=False)
+
+		for i in range(5, 7):
+			self.model.objects.filter(unidad=i).update(bimestre_activo=True)
+		self.message_user(request, "Las preguntas del bimestre 2 están activas")
+		return HttpResponseRedirect("../")
 
 
 class PreguntasRespondidasAdmin(admin.ModelAdmin):

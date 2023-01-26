@@ -219,3 +219,16 @@ def obtenerCorrecta(pregunta_id, respuesta):
 	correcta = respuesta.objects.filter(pregunta=pregunta_id, correcta=True).get()
 
 	return correcta
+
+def pregunta_list(request):
+	products = Pregunta.objects.all()
+	for product in products.iterator():    
+			if product.bimestre_activo:
+				return render(request,
+							'pregunta_changelist.html',
+							{'product': products})
+			disable_descp = product.__class__.objects.all().values('category', 'name', 'image',...)
+
+			return render(request,
+						'pregunta_changelist.html',
+						{'product': disable_descp})

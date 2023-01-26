@@ -1,0 +1,16 @@
+{% extends 'admin/change_list.html' %}
+
+{% block object-tools-items %}
+    <div>
+        <form action="bimestre_1_activo/" method="POST">
+            {% csrf_token %}
+                <button type="submit">Activar bimestre 1</button>
+        </form>
+        <form action="bimestre_2_activo/" method="POST">
+            {% csrf_token %}
+                <button type="submit">Activar bimestre 2</button>
+        </form>
+    </div>
+    <br />
+    {{ block.super }}
+{% endblock %}

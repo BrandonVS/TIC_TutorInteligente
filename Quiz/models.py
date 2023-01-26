@@ -18,6 +18,7 @@ class Pregunta(models.Model):
 	max_puntaje = models.DecimalField(verbose_name='Maximo Puntaje', default=3, decimal_places=2, max_digits=6)
 	tipo = models.TextField(verbose_name='Tipo de pregunta')
 	unidad = models.IntegerField(verbose_name='Unidad a la que pertenece')
+	bimestre_activo = models.BooleanField(default=True)
 
 	def __str__(self):
 		return self.texto
@@ -53,7 +54,7 @@ class QuizUsuario(models.Model):
 		dif = obtener_dif_pregunta()
 		print(dif)
 		respondidas = PreguntasRespondidas.objects.filter(quizUser=self).values_list('pregunta__pk', flat=True)
-		preguntas_restantes = Pregunta.objects.exclude(pk__in=respondidas)
+		preguntas_restantes = Pregunta.objects.exclude(pk__in=respondidas, bimestre_activo=False)
 		if len(respondidas) >= 20:
 			return None
 		try:
