@@ -22,6 +22,7 @@ pregunta = None
 getP = True
 bandera = False
 nombre_usuario = ''
+t_aux = 0
 
 def inicio(request):
 	global sec
@@ -104,6 +105,7 @@ def jugar(request):
 	global getP
 	global bandera
 	global nombre_usuario
+	global t_aux
 
 	try:
 		QuizUser = QuizUsuario.objects.get(usuario=get_client_ip(request), nombre=nombre_usuario)
@@ -122,6 +124,8 @@ def jugar(request):
 
 	if request.method == 'POST':
 
+		t_aux = 1800 - int(sec)
+
 		pregunta_pk = request.POST.get('pregunta_pk')
 
 		respuesta_pk = request.POST.get('respuesta_pk')
@@ -132,7 +136,7 @@ def jugar(request):
 		ultima = t_pregunta
 		QuizUser.crear_intentos(pregunta)
 		pregunta_respondida = QuizUser.intentos.select_related('pregunta').filter(pregunta__pk=pregunta_pk).last()
-		print(type(pregunta_respondida))
+
 		opcion_selecionada = pregunta_respondida.pregunta.opciones.get(pk=respuesta_pk)
 		array.append(pregunta_respondida)
 
@@ -180,7 +184,8 @@ def jugar(request):
 	sec = request.GET.get('sec', None)
 
 	if sec != None:
-		t_pregunta = 1800 - int(sec) - ultima
+		t_pregunta = 1800 - int(sec) - t_aux
+
 
 	return render(request, 'play/jugar.html', context)
 

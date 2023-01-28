@@ -54,7 +54,8 @@ class QuizUsuario(models.Model):
 		dif = obtener_dif_pregunta()
 		print(dif)
 		respondidas = PreguntasRespondidas.objects.filter(quizUser=self).values_list('pregunta__pk', flat=True)
-		preguntas_restantes = Pregunta.objects.exclude(pk__in=respondidas, bimestre_activo=False)
+		preguntas_restantes = Pregunta.objects.exclude(pk__in=respondidas)
+		preguntas_restantes = preguntas_restantes.exclude(bimestre_activo=False)
 		if len(respondidas) >= 20:
 			return None
 		try:
